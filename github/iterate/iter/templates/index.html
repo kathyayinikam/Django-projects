@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    table{
+        border: 1px solid black;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px black;
+        padding: 25px;
+    }
+    td{
+        border:0px solid rgb(255, 255, 255);
+        min-width: 13px;
+        height: 13px;
+        background-color:gainsboro;
+        border-radius: 2px;
+    }
+    th{
+        font-size: 13px;
+        vertical-align: bottom;
+    }
+    #none{
+        background-color: white;
+        color: rgb(124, 122, 122);
+        padding-left: 12px;
+        font-size: 13px;
+    }
+</style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th></th>
+            <th colspan="4">Jan</th>
+            <th colspan="4">Feb</th>
+            <th colspan="4">Mar</th>
+            <th colspan="4">Apr</th>
+            <th colspan="4">May</th>
+            <th colspan="4">Jun</th>
+            <th colspan="4">Jul</th>
+            <th colspan="4">Aug</th>
+            <th colspan="4">Sep</th>
+            <th colspan="4">Oct</th>
+            <th colspan="4">Nov</th>
+            <th colspan="4">Dec</th>
+        </tr>
+     <tr>
+        {% for j in param3%}
+        <th>{{j}}</th>
+        {% for i in param1 %}
+            {% for i in param2 %}
+         <td></td>
+         {% endfor %}
+         {% endfor%}
+         </tr>
+         {% endfor %}
+         <tr>
+            <td id="none"></td>
+        </tr>
+        <tr style="position: relative;">
+            <td id="none" colspan="13">Learn how we count contribution
+                <td colspan="25" id="none"></td>
+                <td id="none" colspan="3">Less
+                <td></td>
+                <td style="background-color: rgb(209, 255, 200);"></td>
+                <td style="background-color: rgb(176, 255, 161);"></td>
+                <td style="background-color: hsl(110, 100%, 70%);"></td>
+                <td style="background-color: rgb(41, 248, 0);"></td>
+                <td id="none" colspan="3">more</td>
+            </td>
+            </td>
+            </td>
+        </tr>
+     </table>
+    
+</body>
+</html>
