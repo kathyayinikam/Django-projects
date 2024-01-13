@@ -17,7 +17,10 @@ def home(request):
             elif(n3=='/'):
                 if(n2==0):
                     result=n1/n2
-                
+            elif(n3=='%'):
+                 result=n1%n2
+            else:
+                result=0
             
             return render(request,'index.html',{'param4':result,'param3':n2,'param1':n1,'param2':n3,'form':form1})
     else:
