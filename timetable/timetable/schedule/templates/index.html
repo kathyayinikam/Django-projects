@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time table </title>
+    <style>
+        body{
+            text-align: center;
+            font-weight: 600;
+        }
+        table{
+            border:1px solid black;
+            border-collapse: collapse;
+            margin:auto;
+        }
+        th{
+            background-color: yellow;
+        }
+        th,td{
+            border:1px solid black;
+            font-family: 'Franklin Gothic Medium';
+        width:100px;
+        text-align: center;
+        }
+        tr{
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead style="font: weight 900px;">Fun with Programming - Timings in IST-https://whereby.com/sangamone</thead>
+      
+            <th style="background-color:antiquewhite">Day</th>
+            <th>05:00</th>
+            <th>05:30</th>
+            <th>6:30</th>
+            <th>11:00</th>
+            <th>12:00</th>
+            <th>19:00</th>
+            
+<tbody id="content">
+    </tbody>
+    </table>
+    <script>
+var table=document.getElementById('content');
+var write="";
+const weekdays=["Mon","Tue","Wed","Thur","Fri","Sat","Sun"];
+for(let j=0;j<7;j++){
+
+
+for(let i=0;i<7;i++){
+    if(i==0){
+        if(j==5||j==6){
+            write+="<td style=background-color:yellow;font-weight:bold;color:red>"+weekdays[j]+"</td>";
+        }
+        else{
+            write+="<td style=background-color:yellow;font-weight:bold;>"+weekdays[j]+"</td>";
+        }
+       
+    }
+    else if(j==5||j==6){
+        if(j==6 && i==2){
+            write+="<td>JavaScript</td>"; 
+        }
+        else if(j==6 && i==4){
+            write+="<td style=color:red>Python</td>";
+        }
+        else if(j==6 && i==5){
+            write+="<td style=color:blue>Java</td>";
+        }
+        else{
+        write+="<td></td>";
+        }
+    }
+    else if(i==1){
+        write+="<td style=color:red>Python</td>";
+    }
+    else if(i==3){
+        write+="<td style=color:blue>Java</td>";
+    }
+    else if(i==6){
+        if(j% 2==0){
+            write+="<td style=color:blue>Java</td>";
+        }
+        else{
+            write+="<td style=color:red>Python</td>";
+        }
+       
+    }
+    else{
+    write+="<td></td>";
+    }
+
+}
+}
+
+console.log(table);
+table.innerHTML=write;
+
+    </script>
+</body>
+</html>
