@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter your name</title>
+    <style>
+        .main{
+            height:250px;
+            width:400px;
+            margin-left: 200px;background-color: rgb(145, 240, 208);
+            color:rgb(12, 56, 41);
+            align-items: center;
+            text-align: center;
+            border-radius:15px;
+        }
+        button{
+            background-color: rgb(10, 66, 47);
+            padding:10px;
+            color:white;
+            border-radius: 5px;
+        }
+        .main1{
+            height:400px;
+            width:400px;
+            margin-left: 200px;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+    <h1>Open your account</h1>
+  
+    <form method="post">
+        {% csrf_token %}
+        <br>
+        {{ form.as_p }}
+        
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div class="main1">
+    {% if name %}
+        <h2>Name: {{ name }}</h2>
+    {% endif %}
+    
+  {% if drop %}
+        <h2>A/c type: {{ drop }}</h2>
+    {% endif %}
+    {% if ac %}
+        <h2>Your account number is: {{ ac }}</h2>
+    {% endif %}
+</div>
+</body>
+</html>
