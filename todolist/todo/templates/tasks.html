@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TO DO LIST</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   
+    <style>
+        body {
+           
+            justify-content: center;
+            align-items: center;
+            background-image: url("https://i.pinimg.com/564x/3b/b3/c8/3bb3c810f9ea3be5d723b3d7fad7c12e.jpg");
+            background-repeat: no-repeat; 
+            background-size: cover;
+            background-position: center;
+            height:300vh;
+          
+            margin: 0;
+            font-family: 'Calibri', sans-serif;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+          margin-top:-100px;
+        }
+
+        .main {
+            border-radius: 20px;
+            padding: 20px;
+           
+        }
+        tr {
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.669);
+            width: 100%;
+        }
+
+        tr, td {
+            padding: 10px;
+            height: 40px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+        a{
+            padding: 10px;
+        }
+
+        #del {
+            background-color: red;
+            color: white;
+            font-weight: bold;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        h1 {
+            color: #102C57;
+            font-weight: 900;
+            font-size: 50px;
+        }
+
+        #sub {
+            background-color: #102C57;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form {
+            border-radius: 5px;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.669);
+            color: black;
+            padding: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+        form {
+            background-color: rgba(255, 255, 255, 0.669);
+            color: black;
+            display: flex;
+        }
+        input {
+            background-color: white;
+            width: 200px;
+            height: 30px;
+            border: antiquewhite;
+        }
+        label {
+            font-weight: bold;
+            margin-left: 100px;
+            font-size: 20px;
+            color: #1A2130;
+        }
+        h1 {
+            color: white;
+        }
+        button {
+            background-color: #102C57;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 12px;
+            padding: 10px;
+            height: 30px;
+        }
+        .completed-tasks {
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div style="text-align: right; padding: 10px;">
+        {% if user.is_authenticated %}
+            <h4 style="color:white;font-weight:bold">Welcome, {{ user.username }}! <a href="{% url 'login' %}" style="color:white;font-weight:bold">Logout</a></h4>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+    </div>
+    <strong><center><h1 style="color:#102C57">My Day</h1></center></strong>
+    <div class="main">
+        <form method="post" action="{% url 'todoform' %}" id="form">
+            <h2 style="margin-left:50px">ADD TASK</h2>
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" style="border-radius:50%;height:40px; margin-top:10px; margin-left:40px"><i class="fa-solid fa-plus"></i></button>
+        </form>
+    </div>
+    <div class="main">
+        <center>
+            <table>
+                <br>
+                {% for to in t1 %}
+                    <tr>
+                        <td>{{ to.time }}</td>
+                        <td style="width:800px;">{{ to.todo }}</td>
+                        <td style="display:flex">
+                            <input type="checkbox" class="task-checkbox" data-task-id="{{ to.id }}">
+                            <a href="{% url 'task_update' to.id %}" id="edit" style=
+                            'margin-left:10px'><i class="fa fa-edit" aria-hidden="true"></i></a> 
+                            <form method="post" action="{% url 'delete_task' to.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" id="del"><i class="fa fa-trash" aria-hidden="true"></i></button> 
+                            </form>
+                          
+                           
+                        </td>
+                    </tr>
+                    <br>
+                {% endfor %}
+            </table>
+        </center>
+    </div>
+    <center><h2 style="color:white">Completed Tasks</h2></center>
+    <br><br><br>
+    <div class="completed-tasks">
+        <center>
+            
+            <table id="completed-tasks-table">
+                <!-- Completed tasks will be appended here -->
+            </table>
+        </center>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const completedTasksTable = document.getElementById('completed-tasks-table');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        const row = this.closest('tr');
+                        completedTasksTable.appendChild(row);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
