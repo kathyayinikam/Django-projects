@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Bill Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background: #45a049;
+        }
+        img{
+            height:500px;
+            width:100%;
+        }
+        .main{
+            padding:150px;
+            
+        }
+    </style>
+</head>
+<body>
+    <div >
+    <h1>Upload Bill Image</h1>
+    <center><form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="file" accept="image/*" required>
+        <input type="submit" value="Upload">
+    </form></center>
+    
+</div>
+<div class="main">
+{% if uploaded_file_url %}
+        <h2>Uploaded Image:</h2>
+        <center><img src="{{ uploaded_file_url }}" alt="Uploaded Bill" heigh=200></center>
+    {% endif %}
+</div>
+</body>
+</html>
