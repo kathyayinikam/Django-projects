@@ -42,31 +42,64 @@
         input[type="submit"]:hover {
             background: #45a049;
         }
-        img{
-            height:500px;
-            width:100%;
+
+        img {
+            height: 500px;
+            width: auto;
+            display: block;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
-        .main{
-            padding:150px;
-            
+
+        .main {
+            padding: 20px;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div >
-    <h1>Upload Bill Image</h1>
-    <center><form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="file" accept="image/*" required>
-        <input type="submit" value="Upload">
-    </form></center>
     
-</div>
-<div class="main">
-{% if uploaded_file_url %}
-        <h2>Uploaded Image:</h2>
-        <center><img src="{{ uploaded_file_url }}" alt="Uploaded Bill" heigh=200></center>
-    {% endif %}
-</div>
+    <div class="main">
+        <div>
+            <h1>Upload Bill Image</h1>
+            <center>
+                <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="file" accept="image/*" required>
+                    <input type="submit" value="Upload">
+                </form>
+            </center>
+        </div>
+    
+        {% if uploaded_file_url %}
+        <div id="image">
+            <h2>Uploaded Image:</h2>
+            <center><img src="{{ uploaded_file_url }}" alt="Uploaded Bill"></center></div>
+            <div class="results">
+                <h2>Extracted Data:</h2>
+                <ul>
+                    <li class="result-item">Address Match: {{ address_match }}</li>
+                    <li class="result-item">RR Number: {{ rr_number }}</li>
+                    <li class="result-item">Reading Date: {{ reading_date }}</li>
+                    <li class="result-item">Account ID Match: {{ account_id }}</li>
+                    <li class="result-item">Consumption Match: {{ consumption }}</li>
+                    <li class="result-item">Tax Match: {{ tax }}</li>
+                    <li class="result-item">Net Amount Due Match: {{ net_amount_due }}</li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

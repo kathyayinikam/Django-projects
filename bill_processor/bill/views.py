@@ -13,6 +13,7 @@ from nltk.corpus import stopwords
 # Download NLTK resources
 nltk.download('punkt')
 nltk.download('stopwords')
+
 def upload(request):
     if request.method == 'POST' and request.FILES['file']:
         # Delete previous uploaded file if exists
@@ -30,11 +31,19 @@ def upload(request):
         request.session['uploaded_file_url'] = filename
 
         # Process the image and extract data
-        process_image(fs.path(filename))
+        extracted_data = process_image(fs.path(filename))
 
         return render(request, 'bill_detail.html', {
-            'uploaded_file_url': uploaded_file_url
+            'uploaded_file_url': uploaded_file_url,
+            'address_match': extracted_data.get('address', 'No match'),
+            'rr_number': extracted_data.get('rr_number', 'No match'),
+            'reading_date': extracted_data.get('reading_date', 'No match'),
+            'account_id': extracted_data.get('account_id', 'No match'),
+            'consumption': extracted_data.get('consumption', 'No match'),
+            'tax': extracted_data.get('tax', 'No match'),
+            'net_amount_due': extracted_data.get('net_amount_due', 'No match'),
         })
+
     return render(request, 'bill_detail.html')
 
 def process_image(image_path):
@@ -71,14 +80,23 @@ def process_image(image_path):
     # Print the filtered OCR text
     print("Filtered OCR Text:", filtered_text)
 
+    # Extract data using regex patterns
+    extracted_data = extract_data(filtered_text)
+
+    # Save data to Excel
+    save_to_excel(extracted_data)
+
+    return extracted_data
+
+def extract_data(filtered_text):
     # Define regex patterns for specific fields
-    address_pattern = re.compile(r'Name and Address: ([\w\s,]+)')
+    address_pattern = re.compile(r'Name Address ([\w\s,()]+)')
     rr_pattern = re.compile(r'RR Number \$?(\d+\.?\d+[A-Za-z]*)')
     acc_pattern = re.compile(r'Account ID \$?(\d+\.?\d*)')
     amt_pattern = re.compile(r'Due\s*:\s*(\d+\s\d+\s[\d.]+)')
     consume_pattern = re.compile(r'Consumption \$?(\d+\.?\d*)')
     tax_pattern = re.compile(r'Tax \$?(\d+\.?\d*)')
-    date_pattern = re.compile(r'J8637\s*Uc=\s*Reading Date:\s*(\d{2})\s*/\s*(\d{2})\s*/\s*(\d{2})')
+    date_pattern = re.compile(r'Reading Date\s*:\s*([\d]{2}\s\/\s[\d]{2}\/\s[\d]{2})')
 
     # Search for patterns in OCR text
     address = address_pattern.search(filtered_text)
@@ -89,17 +107,29 @@ def process_image(image_path):
     tax = tax_pattern.search(filtered_text)
     date = date_pattern.search(filtered_text)
 
+    # Prepare extracted data dictionary
+    extracted_data = {
+        'address': address.group(1) if address else "No match",
+        'rr_number': rr.group(1) if rr else "No match",
+        'reading_date': date.group(1) if date else "No match",
+        'account_id': accoun.group(1) if accoun else "No match",
+        'consumption': consume.group(1) if consume else "No match",
+        'tax': tax.group(1) if tax else "No match",
+        'net_amount_due': amt.group(1) if amt else "No match"
+    }
+
     # Print the matches to verify
-    print("Address Match:", address.group(1) if address else "No match")
-    print("RR Number:", rr.group(1) if rr else "No match")
-    print("Reading Date:", date.group(0) if date else "No match")
-    print("Account ID Match:", accoun.group(1) if accoun else "No match")
-    print("Consumption Match:", consume.group(1) if consume else "No match")
-    print("Tax Match:", tax.group(1) if tax else "No match")
-    print("Net Amount Due Match:", amt.group(1) if amt else "No match")
+    print("Address Match:", extracted_data['address'])
+    print("RR Number:", extracted_data['rr_number'])
+    print("Reading Date:", extracted_data['reading_date'])
+    print("Account ID Match:", extracted_data['account_id'])
+    print("Consumption Match:", extracted_data['consumption'])
+    print("Tax Match:", extracted_data['tax'])
+    print("Net Amount Due Match:", extracted_data['net_amount_due'])
 
+    return extracted_data
 
-    # Check if the Excel file already exists
+def save_to_excel(extracted_data):
     excel_path = os.path.join(settings.MEDIA_ROOT, 'bill.xlsx')
     try:
         wb = load_workbook(excel_path)
@@ -111,7 +141,7 @@ def process_image(image_path):
         # Write headers if creating a new workbook
         ws['A1'] = 'Name'
         ws['B1'] = 'RR Number'
-        ws['C1']='Date'
+        ws['C1'] = 'Date'
         ws['D1'] = 'Account ID'
         ws['E1'] = 'Consumption'
         ws['F1'] = 'Tax'
@@ -121,20 +151,20 @@ def process_image(image_path):
     next_row = ws.max_row + 1
 
     # Write data if found
-    if address:
-        ws[f'A{next_row}'] = address.group(1)
-    if rr:
-        ws[f'B{next_row}'] = rr.group(1)
-    if date:
-        ws[f'C{next_row}'] = date.group(1)
-    if accoun:
-        ws[f'D{next_row}'] = accoun.group(1)
-    if consume:
-        ws[f'E{next_row}'] = consume.group(1)
-    if tax:
-        ws[f'F{next_row}'] = tax.group(1)
-    if amt:
-        ws[f'G{next_row}'] = amt.group(1)
+    if extracted_data['address'] != "No match":
+        ws[f'A{next_row}'] = extracted_data['address']
+    if extracted_data['rr_number'] != "No match":
+        ws[f'B{next_row}'] = extracted_data['rr_number']
+    if extracted_data['reading_date'] != "No match":
+        ws[f'C{next_row}'] = extracted_data['reading_date']
+    if extracted_data['account_id'] != "No match":
+        ws[f'D{next_row}'] = extracted_data['account_id']
+    if extracted_data['consumption'] != "No match":
+        ws[f'E{next_row}'] = extracted_data['consumption']
+    if extracted_data['tax'] != "No match":
+        ws[f'F{next_row}'] = extracted_data['tax']
+    if extracted_data['net_amount_due'] != "No match":
+        ws[f'G{next_row}'] = extracted_data['net_amount_due']
 
     # Save the workbook
     wb.save(excel_path)
